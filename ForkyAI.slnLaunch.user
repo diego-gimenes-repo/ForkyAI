@@ -1,0 +1,17 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "Silo\\Silo.csproj",
+        "Action": "Start",
+        "DebugTarget": "Silo"
+      },
+      {
+        "Path": "OrleansCluster\\Client\\Client.csproj",
+        "Action": "Start",
+        "DebugTarget": "Client"
+      }
+    ]
+  }
+]

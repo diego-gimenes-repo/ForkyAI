@@ -1,0 +1,93 @@
+services:
+  api-gateway:
+    image: forkyai-api-gateway-image
+    build:
+      context: ./ApiGateway
+    ports:
+      - "5000:5000"
+    depends_on:
+      - orleans-cluster
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+
+  orleans-cluster:
+    image: forkyai-orleans-cluster-image
+    build:
+      context: ./OrleansCluster
+    depends_on:
+      - mongodb
+    environment:
+      - ORLEANS_ENVIRONMENT=Production
+    ports:
+      - "11111:11111"
+      - "30000:30000"
+
+  redpanda:
+    image: vectorized/redpanda
+    ports:
+      - "9092:9092"
+    environment:
+      - REDPANDA_ENV=production
+
+  qdrant:
+    image: qdrant/qdrant
+    ports:
+      - "6333:6333"
+    environment:
+      - QDRANT_ENV=production
+
+  mongodb:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=adminpassword
+
+  frontend:
+    image: forkyai-frontend-image
+    build:
+      context: ./Frontend/ReactApp
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api-gateway
+
+  worker-csharp:
+    image: forkyai-csharp-worker-image
+    build:
+      context: ./Workers/CSharpWorker
+    depends_on:
+      - redpanda
+
+  worker-python:
+    image: forkyai-python-worker-image
+    build:
+      context: ./Workers/PythonWorker
+    depends_on:
+      - redpanda
+
+  semantic-kernel:
+    image: forkyai-semantic-kernel-image
+    build:
+      context: ./SemanticKernel
+    depends_on:
+      - qdrant
+      - mongodb
+
+  opentelemetry-collector:
+    image: otel/opentelemetry-collector
+    ports:
+      - "4317:4317"
+    depends_on:
+      - api-gateway
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://azure-monitor
+
+  azure-monitor:
+    image: forkyai-azure-monitor-image
+    ports:
+      - "8888:8888"
+    depends_on:
+      - opentelemetry-collector

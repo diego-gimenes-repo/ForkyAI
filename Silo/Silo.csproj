@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<ServerGarbageCollection>true</ServerGarbageCollection>
+		<ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
+	</PropertyGroup>
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.2" />
+	  <PackageReference Include="Microsoft.Orleans.Persistence.Memory" Version="9.1.2" />
+	  <PackageReference Include="Microsoft.Orleans.Runtime" Version="9.1.2" />
+	  <PackageReference Include="Microsoft.Orleans.Server" Version="9.1.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Grains\Grains.csproj" />
+		<ProjectReference Include="..\OrleansCluster\GrainInterfaces\GrainInterfaces.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="appsettings.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+</Project>
